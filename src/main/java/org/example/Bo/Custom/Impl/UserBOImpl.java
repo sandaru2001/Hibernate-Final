@@ -2,9 +2,9 @@ package org.example.Bo.Custom.Impl;
 
 
 
-import org.example.Bo.Custom.UserBo;
-import org.example.Dao.DaoFactory;
-import org.example.Dao.custom.UserDao;
+import org.example.Bo.Custom.UserBO;
+import org.example.Dao.DAOFactory;
+import org.example.Dao.custom.UserDAO;
 import org.example.dto.UserDTO;
 import org.example.entity.User;
 
@@ -13,8 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserBoImpl implements UserBo {
-    UserDao userDao = (UserDao) DaoFactory.getDaoFactory().getDAO(DaoFactory.DAOTypes.USER);
+public class UserBOImpl implements UserBO {
+    UserDAO userDao = (UserDAO) DAOFactory.getDaoFactory().getDAO(DAOFactory.DAOTypes.USER);
 
     @Override
     public List<UserDTO> getAllUser() throws SQLException, ClassNotFoundException, IOException {

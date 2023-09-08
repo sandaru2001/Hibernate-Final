@@ -7,8 +7,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import lombok.SneakyThrows;
-import org.example.Bo.BoFactory;
-import org.example.Bo.Custom.UserBo;
+import org.example.Bo.BOFactory;
+import org.example.Bo.Custom.UserBO;
 import org.example.dto.UserDTO;
 import org.example.entity.User;
 
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ManageUserController implements Initializable {
-    UserBo userBo = (UserBo) BoFactory.getBoFactory().getBO(BoFactory.BOTypes.USER);
+    UserBO userBo = (UserBO) BOFactory.getBoFactory().getBO(BOFactory.BOTypes.USER);
 
     public Label lblUserId;
     public TextField txtUserName;

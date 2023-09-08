@@ -1,50 +1,42 @@
 package org.example.Dao.custom.Impl;
 
-
-import org.example.Dao.custom.UserDao;
-import org.example.entity.User;
+import org.example.Dao.custom.RoomDAO;
+import org.example.entity.Room;
 import org.example.util.FactoryConfiguration;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.NativeQuery;
 
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class UserDaoImpl implements UserDao {
+public class RoomDAOImpl implements RoomDAO {
     @Override
-    public List<User> getAll() throws SQLException, ClassNotFoundException, IOException {
-        /*Session session = FactoryConfiguration.getInstance().getSession();
-        Transaction transaction = session.beginTransaction();
-        List<User> list = (List<User>) session.createNativeQuery("SELECT * FROM user");
-        transaction.commit();
-        session.close();
-        return list;*/
-
+    public List<Room> getAll() throws SQLException, ClassNotFoundException, IOException {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
-        NativeQuery nativeQuery = session.createNativeQuery("SELECT * FROM user");
-        nativeQuery.addEntity(User.class);
-        List<User> users = nativeQuery.getResultList();
+        NativeQuery nativeQuery = session.createNativeQuery("SELECT * FROM room");
+        nativeQuery.addEntity(Room.class);
+        List<Room> rooms = nativeQuery.getResultList();
         transaction.commit();
         session.close();
-        return users;
+        return rooms;
     }
 
     @Override
-    public boolean add(User entity) throws SQLException, ClassNotFoundException, IOException {
+    public boolean add(Room entity) throws SQLException, ClassNotFoundException, IOException {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
-        session.save(entity);
+        session.persist(entity);
         transaction.commit();
         session.close();
-
         return true;
     }
 
     @Override
-    public boolean update(User entity) throws SQLException, ClassNotFoundException, IOException {
+    public boolean update(Room entity) throws SQLException, ClassNotFoundException, IOException {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
         session.update(entity);
@@ -57,10 +49,9 @@ public class UserDaoImpl implements UserDao {
     public boolean delete(String id) throws SQLException, ClassNotFoundException, IOException {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
-
-        String sql = "DELETE FROM user WHERE userid = :id";
-        NativeQuery<User> nativeQuery = session.createNativeQuery(sql);
-        nativeQuery.setParameter("id", id);
+        String sql = "DELETE FROM room WHERE roomId = :id";
+        NativeQuery<Room> nativeQuery = session.createNativeQuery(sql);
+        nativeQuery.setParameter("id",id);
         nativeQuery.executeUpdate();
 
         transaction.commit();
@@ -68,33 +59,45 @@ public class UserDaoImpl implements UserDao {
         return true;
     }
 
-
     @Override
     public String generateNewID() throws SQLException, ClassNotFoundException, IOException {
         Session session = FactoryConfiguration.getInstance().getSession();
         Transaction transaction = session.beginTransaction();
-        NativeQuery<String> nativeQuery = session.createNativeQuery("SELECT userid FROM User ORDER BY userid DESC LIMIT 1");
+        NativeQuery<String> nativeQuery = session.createNativeQuery("SELECT roomId FROM Room ORDER BY roomId DESC LIMIT 1");
         String id = nativeQuery.uniqueResult();
         transaction.commit();
         session.close();
-
         if(id != null){
-            String[] strings = id.split("U0");
+            String[] strings = id.split("RM-");
             int newID = Integer.parseInt(strings[1]);
             newID++;
             String ID = String.valueOf(newID);
             int length = ID.length();
             if (length < 2){
-                return "U00"+newID;
+                return "RM-00"+newID;
             }else {
                 if (length < 3){
-                    return "U0"+newID;
+                    return "RM-0"+newID;
                 }else {
-                    return "U"+newID;
+                    return "RM"+newID;
                 }
             }
         }else {
-            return "U001";
+            return "RM-001";
         }
+    }
+
+    @Override
+    public Room search(String id) throws SQLException, ClassNotFoundException, IOException {
+        Session session = FactoryConfiguration.getInstance().getSession();
+        Transaction transaction = session.beginTransaction();
+        NativeQuery nativeQuery = session.createNativeQuery("SELECT * FROM room WHERE roomId = :roomId");
+        nativeQuery.setParameter("roomId",id);
+
+        nativeQuery.addEntity(Room.class);
+        Room room = (Room) nativeQuery.uniqueResult();
+        transaction.commit();
+        session.close();
+        return room;
     }
 }
